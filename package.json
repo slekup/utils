@@ -50,12 +50,6 @@
     "trailingComma": "es5",
     "useTabs": false
   },
-  "dependencies": {
-    "colors": "^1.4.0",
-    "discord.js": "^14.11.0",
-    "logform": "^2.5.1",
-    "winston": "^3.9.0"
-  },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.5",
     "@types/node": "^20.2.5",

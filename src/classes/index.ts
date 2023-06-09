@@ -1,1 +1,3 @@
-export { default as DiscordLogger } from './DiscordLogger';
+const hello = 'hello';
+
+export { hello as world };
