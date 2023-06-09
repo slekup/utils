@@ -4,6 +4,9 @@
  * @returns The stripped indentation.
  */
 const stripIndents = (input: string): string => {
+  if (typeof input !== 'string') throw new TypeError('Expected a string');
+  if (input.length === 0) return input;
+
   // Find the minimum number of leading spaces in non-empty lines
   const minIndent = input
     .split('\n')

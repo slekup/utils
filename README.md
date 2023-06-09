@@ -23,10 +23,13 @@ npm install @slekup/utils
 
 ## Functions
 
-| Function       | Description                       |
-| -------------- | --------------------------------- |
-| `splitArray`   | Split an array into chunk         |
-| `stripIndents` | Removes the indents from a string |
+| Function            | Description                                                            |
+| ------------------- | ---------------------------------------------------------------------- |
+| `ensureDirectories` | Ensures that arrays of directories exist or are created                |
+| `ordinalNumber`     | Adds the ordinal suffix to a number                                    |
+| `splitArray`        | Split an array into chunk                                              |
+| `stripIndents`      | Removes the indents from a string                                      |
+| `verifyEnvironment` | Verifies that the environment variables are set are are the right type |
 
 ## Classes
 

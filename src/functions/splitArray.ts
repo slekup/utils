@@ -5,6 +5,11 @@
  * @returns The array split into chunks.
  */
 const splitArray = (array: unknown[], max: number): unknown[][] => {
+  if (!Array.isArray(array)) throw new TypeError('Expected an array');
+  if (typeof max !== 'number') throw new TypeError('Expected a number');
+  if (max < 1) return [];
+  if (max >= array.length) return [array];
+
   const result = array.reduce(
     (resultArray: unknown[][], item: unknown, index: number) => {
       const newArray: unknown[][] = [...resultArray];
