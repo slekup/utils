@@ -1,4 +1,4 @@
-import { Client, TextChannel } from 'discord.js';
+import { ChannelType, Client, TextChannel } from 'discord.js';
 
 /**
  * Sends a message to the Discord channel.
@@ -165,7 +165,7 @@ export default class DiscordLogger {
         throw new Error(`Failed to fetch channel for level: "${level}"`);
 
       // If the channel is not a text channel
-      if (!(channel instanceof TextChannel))
+      if (channel.type !== ChannelType.GuildText)
         throw new Error(`Channel for level: "${level}" is not a text channel`);
 
       // Create a new log level instance and add it to the levels map
@@ -184,7 +184,10 @@ export default class DiscordLogger {
   public send(level: string, message: string): void {
     const lvl = level.replace(ANSI_REGEX, '');
 
-    if (!this.ready) setTimeout(() => this.send(lvl, message), 1000);
+    if (!this.ready) {
+      setTimeout(() => this.send(lvl, message), 1000);
+      return;
+    }
 
     if (!this.channels[lvl])
       throw new Error(`No log channel defined for level: "${lvl}"`);
