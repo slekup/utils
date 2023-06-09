@@ -28,15 +28,18 @@ class LogLevel {
   private channel: TextChannel;
   private processing: boolean;
   private queue: string[];
+  private customQueue?: string[];
 
   /**
    * Creates a new instance of the LogLevel class.
    * @param channel The channel to send the logs to.
+   * @param customQueue The custom queue to use for this log level.
    */
-  public constructor(channel: TextChannel) {
+  public constructor(channel: TextChannel, customQueue?: string[]) {
     this.channel = channel;
     this.processing = false;
     this.queue = [];
+    if (customQueue) this.customQueue = customQueue;
 
     setInterval(() => {
       this.send();
@@ -48,6 +51,10 @@ class LogLevel {
    * @param message The message to add to the queue.
    */
   public add(message: string): void {
+    if (this.customQueue) {
+      this.customQueue.push(message);
+      return;
+    }
     this.queue.push(message);
   }
 
@@ -55,7 +62,14 @@ class LogLevel {
    * Sends a chunk of log messages to the Discord channel.
    */
   private async send(): Promise<void> {
-    if (!(this.queue.length > 0) || this.processing) return;
+    if (
+      !(
+        (this.customQueue && this.customQueue.length > 0) ||
+        this.queue.length > 0
+      ) ||
+      this.processing
+    )
+      return;
 
     this.processing = true;
 
@@ -63,12 +77,18 @@ class LogLevel {
     let chunkSent = false;
 
     // Add logs to the logChunk until the message is too long
-    while (this.queue.length > 0 && !chunkSent) {
-      const message = this.queue[0]?.replace(ANSI_REGEX, '') ?? '';
+    while (
+      ((this.customQueue && this.customQueue.length > 0) ||
+        this.queue.length > 0) &&
+      !chunkSent
+    ) {
+      const message =
+        (this.customQueue?.[0] ?? this.queue[0])?.replace(ANSI_REGEX, '') ?? '';
 
       // If the message/log is too long, remove it from the queue
       if (logChunk.length > 1500) {
-        this.queue.shift();
+        if (this.customQueue) this.customQueue.shift();
+        else this.queue.shift();
         continue;
       }
 
@@ -81,7 +101,8 @@ class LogLevel {
       logChunk += `${message}\n`;
 
       // Remove the log from the queue
-      this.queue.shift();
+      if (this.customQueue) this.customQueue.shift();
+      else this.queue.shift();
     }
 
     // Send any remaining logs
@@ -96,6 +117,7 @@ class LogLevel {
 interface DiscordLoggerOptions {
   client: Client;
   channels: Record<string, string>;
+  customQueue?: Record<string, string[]>;
 }
 
 /**
@@ -104,6 +126,7 @@ interface DiscordLoggerOptions {
 export default class DiscordLogger {
   private client: Client;
   private channels: Record<string, string>;
+  private customQueue?: Record<string, string[]>;
   private levels: Map<string, LogLevel>;
   private ready: boolean;
 
@@ -116,6 +139,7 @@ export default class DiscordLogger {
   public constructor(options: DiscordLoggerOptions) {
     this.client = options.client;
     this.channels = options.channels;
+    if (options.customQueue) this.customQueue = options.customQueue;
     this.levels = new Map();
     this.ready = false;
 
@@ -145,7 +169,7 @@ export default class DiscordLogger {
         throw new Error(`Channel for level: "${level}" is not a text channel`);
 
       // Create a new log level instance and add it to the levels map
-      const logLevel = new LogLevel(channel);
+      const logLevel = new LogLevel(channel, this.customQueue?.[level]);
       this.levels.set(level, logLevel);
     }
 
