@@ -24,7 +24,7 @@ const ANSI_REGEX = /\u001b\[[0-9]{1,2}m/gi;
 interface LogLevelOptions {
   channel: TextChannel;
   customQueue?: string[] | undefined;
-  interval?: number;
+  interval?: number | undefined;
 }
 
 /**
@@ -126,7 +126,7 @@ interface DiscordLoggerOptions {
   client: Client;
   channels: Record<string, string>;
   customQueue?: Record<string, string[]>;
-  interval: number;
+  interval?: number;
 }
 
 /**
@@ -136,7 +136,7 @@ export default class DiscordLogger {
   private client: Client;
   private channels: Record<string, string>;
   private customQueue?: Record<string, string[]>;
-  private interval: number;
+  private interval?: number;
   private levels: Map<string, LogLevel>;
   private ready: boolean;
 
@@ -152,7 +152,7 @@ export default class DiscordLogger {
     this.client = options.client;
     this.channels = options.channels;
     if (options.customQueue) this.customQueue = options.customQueue;
-    this.interval = options.interval;
+    if (options.interval) this.interval = options.interval;
     this.levels = new Map();
     this.ready = false;
 
