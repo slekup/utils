@@ -34,7 +34,7 @@
     "format:check": "prettier --check \"src/**/*.ts\"",
     "lint": "eslint src/**/* --ext .ts && tsc --noEmit",
     "lint:fix": "eslint --fix src/**/* --ext .ts && tsc --noEmit",
-    "pre-commit": "npm run lint:fix && npm run format",
+    "precommit": "npm run lint:fix && npm run format",
     "prepare": "husky install"
   },
   "files": [
