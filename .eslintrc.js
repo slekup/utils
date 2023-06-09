@@ -31,6 +31,7 @@ module.exports = {
     'import/first': 0, // Reports any imports that come after non-import statements
     'import/extensions': 0, // Ensures consistent use of file extension within the import path
     'import/prefer-default-export': 0, // Prefer a default export if module exports a single name
+    'import/no-mutable-exports': 0, // Disallows the use of mutable exports with TypeScript
 
     // JSDoc (documentation) rules
     'jsdoc/require-jsdoc': [
