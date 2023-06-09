@@ -1,20 +1,29 @@
-// Splits an array into chunks
 /**
- * @param array
- * @param max
+ * Splits an array into chunks.
+ * @param array The array to split.
+ * @param max The maximum size of each chunk.
+ * @returns The array split into chunks.
  */
-const splitArray = (array: any[], max: number): any[][] => {
-  const result = array.reduce((resultArray, item, index) => {
-    const chunkIndex = Math.floor(index / max);
+const splitArray = (array: unknown[], max: number): unknown[][] => {
+  const result = array.reduce(
+    (resultArray: unknown[][], item: unknown, index: number) => {
+      const newArray: unknown[][] = [...resultArray];
+      const chunkIndex: number = Math.floor(index / max);
 
-    if (!resultArray[chunkIndex]) {
-      resultArray[chunkIndex] = []; // start a new chunk
-    }
+      if (!newArray[chunkIndex]) {
+        // Start a new chunk
+        newArray[chunkIndex] = [];
+      }
 
-    resultArray[chunkIndex].push(item);
+      if (newArray[chunkIndex]) {
+        // Add the item to the chunk
+        (newArray[chunkIndex] as unknown[]).push(item);
+      }
 
-    return resultArray;
-  }, []);
+      return newArray;
+    },
+    []
+  );
 
   return result;
 };
