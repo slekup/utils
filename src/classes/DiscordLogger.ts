@@ -21,6 +21,12 @@ const sendMessage = async (
 /* eslint-disable no-control-regex */
 const ANSI_REGEX = /\u001b\[[0-9]{1,2}m/gi;
 
+interface LogLevelOptions {
+  channel: TextChannel;
+  customQueue?: string[] | undefined;
+  interval?: number;
+}
+
 /**
  * The LogLevel class, used to manage logs for per level.
  */
@@ -32,18 +38,20 @@ class LogLevel {
 
   /**
    * Creates a new instance of the LogLevel class.
-   * @param channel The channel to send the logs to.
-   * @param customQueue The custom queue to use for this log level.
+   * @param options The options to use when creating the log level.
+   * @param options.channel The channel to send the logs to.
+   * @param options.customQueue The custom queue to use for this log level.
+   * @param options.interval The interval to send logs at (in milliseconds).
    */
-  public constructor(channel: TextChannel, customQueue?: string[]) {
-    this.channel = channel;
+  public constructor(options: LogLevelOptions) {
+    this.channel = options.channel;
     this.processing = false;
     this.queue = [];
-    if (customQueue) this.customQueue = customQueue;
+    if (options.customQueue) this.customQueue = options.customQueue;
 
     setInterval(() => {
       this.send();
-    }, 1000 * 1);
+    }, options.interval ?? 1000 * 1);
   }
 
   /**
@@ -118,6 +126,7 @@ interface DiscordLoggerOptions {
   client: Client;
   channels: Record<string, string>;
   customQueue?: Record<string, string[]>;
+  interval: number;
 }
 
 /**
@@ -127,6 +136,7 @@ export default class DiscordLogger {
   private client: Client;
   private channels: Record<string, string>;
   private customQueue?: Record<string, string[]>;
+  private interval: number;
   private levels: Map<string, LogLevel>;
   private ready: boolean;
 
@@ -135,11 +145,14 @@ export default class DiscordLogger {
    * @param options The options to use when creating the logger.
    * @param options.client The Discord client to use.
    * @param options.channels The channels to send logs to.
+   * @param options.customQueue The custom queue to use for each log level.
+   * @param options.interval The interval to send logs at (in milliseconds).
    */
   public constructor(options: DiscordLoggerOptions) {
     this.client = options.client;
     this.channels = options.channels;
     if (options.customQueue) this.customQueue = options.customQueue;
+    this.interval = options.interval;
     this.levels = new Map();
     this.ready = false;
 
@@ -169,7 +182,11 @@ export default class DiscordLogger {
         throw new Error(`Channel for level: "${level}" is not a text channel`);
 
       // Create a new log level instance and add it to the levels map
-      const logLevel = new LogLevel(channel, this.customQueue?.[level]);
+      const logLevel = new LogLevel({
+        channel,
+        customQueue: this.customQueue?.[level],
+        interval: this.interval,
+      });
       this.levels.set(level, logLevel);
     }
 
