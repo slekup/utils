@@ -30,6 +30,5 @@ npm install @slekup/utils
 
 ## Classes
 
-| Class           | Description                                       |
-| --------------- | ------------------------------------------------- |
-| `DiscordLogger` | Logs leveled console messages to discord channels |
+| Class | Description |
+| ----- | ----------- |
