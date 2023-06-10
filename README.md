@@ -30,6 +30,7 @@ npm install @slekup/utils
 | `splitArray`        | Split an array into chunk                                              |
 | `stripIndents`      | Removes the indents from a string                                      |
 | `verifyEnvironment` | Verifies that the environment variables are set are are the right type |
+| `chance`            | Returns a random boolean based on a chance (0 - 100)                   |
 
 ## Classes
 
